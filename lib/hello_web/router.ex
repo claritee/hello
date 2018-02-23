@@ -1,5 +1,10 @@
 defmodule HelloWeb.Router do
   use HelloWeb, :router
+  alias HelloWeb.Plug.BasicAuth
+
+  pipeline :basic_auth do
+    plug BasicAuth, username: "user", password: "secret"
+  end
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -14,7 +19,7 @@ defmodule HelloWeb.Router do
   end
 
   scope "/", HelloWeb do
-    pipe_through :browser # Use the default browser stack
+    pipe_through [:basic_auth, :browser] # Use the default browser stack
 
     get "/", PageController, :index
   end
